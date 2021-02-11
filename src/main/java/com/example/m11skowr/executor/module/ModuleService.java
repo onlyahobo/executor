@@ -9,10 +9,6 @@ import java.util.stream.Stream;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
-/**
- * Copyright (c) Asseco Business Solutions S.A. All rights reserved.
- */
-
 @RequiredArgsConstructor
 class ModuleService {
 
@@ -26,8 +22,8 @@ class ModuleService {
         ).join();
     }
 
-    private Set<String> merge(Set<String> older, Set<String> d) {
-        return Stream.concat(older.stream(), d.stream()).collect(toUnmodifiableSet());
+    private Set<String> merge(Set<String> one, Set<String> two) {
+        return Stream.concat(one.stream(), two.stream()).collect(toUnmodifiableSet());
     }
 
 }

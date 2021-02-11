@@ -8,10 +8,6 @@ import static java.lang.Thread.currentThread;
 import static java.time.Duration.ofSeconds;
 import static java.util.Set.of;
 
-/**
- * Copyright (c) Asseco Business Solutions S.A. All rights reserved.
- */
-
 class ModuleRepository {
 
     Set<String> getCats() {

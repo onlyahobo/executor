@@ -6,10 +6,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
 
-/**
- * Copyright (c) Asseco Business Solutions S.A. All rights reserved.
- */
-
 @Configuration
 class ModuleConfiguration {
 
@@ -34,6 +30,7 @@ class ModuleConfiguration {
         executor.setCorePoolSize(2);
         executor.setMaxPoolSize(2);
         executor.setQueueCapacity(20);
+        executor.setKeepAliveSeconds(0);
         executor.setThreadNamePrefix("AnimalThread-");
         executor.initialize();
         return executor;

@@ -9,10 +9,6 @@ import spock.lang.Specification
 import static java.lang.System.out
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 
-/**
- * Copyright (c) Asseco Business Solutions S.A. All rights reserved.
- */
-
 //https://www.baeldung.com/spring-spock-testing
 
 @SpringBootTest
