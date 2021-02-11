@@ -7,6 +7,7 @@ import org.springframework.test.annotation.DirtiesContext
 import spock.lang.Specification
 
 import static java.lang.System.out
+import static java.lang.Thread.currentThread
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 
 //https://www.baeldung.com/spring-spock-testing
@@ -19,10 +20,17 @@ class ExecutorBehindCacheTest extends Specification {
     @Autowired
     private ModuleFacade moduleFacade
 
+    /*
+        gettingAnimals runnable is not internally synchronized so all threads may enter it as the cpu wishes.
+        with the animalExecutor defined like this: cetCorePoolSize(2), maxPoolSize(2), queueCapacity(18) and 10 threads calling moduleFacade.getAnimals()
+        all threads will enter (as the cache is not yet set) and queue in the executor as only 2 will proceed simultaneously, the other 18 waiting in the queue.
+        No thread will be rejected with this configuration, but if we decrease the queue size to 17 one thread will get rejected, and so on...
+    * */
+
     def "Testing that threads enter in Cacheable method before it gets filled (async) 1"() {
         setup:
         def gettingAnimals = { ->
-            out.println(Thread.currentThread().getName())
+            out.println(currentThread().getName())
             moduleFacade.getAnimals()
         }
 
@@ -43,7 +51,7 @@ class ExecutorBehindCacheTest extends Specification {
         setup:
         def gettingAnimals = { ->
             synchronized (this) {
-                out.println(Thread.currentThread().getName())
+                out.println(currentThread().getName())
                 moduleFacade.getAnimals()
             }
         }
