@@ -1,4 +1,4 @@
-package com.example.m11skowr.executor
+package com.example.m11skowr.executor.module
 
 import com.example.m11skowr.executor.module.ModuleFacade
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,7 +31,7 @@ class ExecutorBehindCacheTest extends Specification {
         setup:
         def gettingAnimals = { ->
             out.println(currentThread().getName())
-            moduleFacade.getAnimals()
+            moduleFacade.getAnimalsCacheableUnsynced()
         }
 
         when:
@@ -40,19 +40,36 @@ class ExecutorBehindCacheTest extends Specification {
 
         and:
         out.println("Second round has started (should get from cache)...")
-        def animals = moduleFacade.getAnimals()
+        def animals = moduleFacade.getAnimalsCacheableUnsynced()
 
         then:
         1 == 1
         out.println(animals)
     }
 
-    def "With synchronization, it clearly shows we get inside Cacheable method only once; other calls get results from cache"() {
+    def "With Cacheable(sync = true), it clearly shows we get inside Cacheable method only once; other calls get results from cache"() {
+        setup:
+        def gettingAnimals = { ->
+            out.println(currentThread().getName())
+            moduleFacade.getAnimalsCacheableSynced()
+        }
+
+        // moduleService.getAnimals() >>> Set.of("lassie")
+
+        when:
+        (1..10).each { new Thread(gettingAnimals).start() }
+        Thread.sleep(60000)
+
+        then:
+        1 == 1
+    }
+
+    def "With java synchronization, it clearly shows we get inside Cacheable method only once; other calls get results from cache"() {
         setup:
         def gettingAnimals = { ->
             synchronized (this) {
                 out.println(currentThread().getName())
-                moduleFacade.getAnimals()
+                moduleFacade.getAnimalsCacheableUnsynced()
             }
         }
 
@@ -62,7 +79,7 @@ class ExecutorBehindCacheTest extends Specification {
 
         and:
         out.println("Second round has started (should get from cache)...")
-        def animals = moduleFacade.getAnimals()
+        def animals = moduleFacade.getAnimalsCacheableUnsynced()
 
         then:
         1 == 1
@@ -73,11 +90,11 @@ class ExecutorBehindCacheTest extends Specification {
     def "Testing that threads enter in Cacheable method before it gets filled (sync)"() {
         when:
         out.println("First round has started...")
-        moduleFacade.getAnimals()
+        moduleFacade.getAnimalsCacheableUnsynced()
 
         and:
         out.println("Second round has started (should get from cache)...")
-        moduleFacade.getAnimals()
+        moduleFacade.getAnimalsCacheableUnsynced()
 
         then:
         1 == 1
