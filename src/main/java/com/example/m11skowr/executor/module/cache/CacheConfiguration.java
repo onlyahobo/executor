@@ -10,10 +10,6 @@ import java.time.Duration;
 import static com.example.m11skowr.executor.module.cache.Cache.CACHE1;
 import static com.example.m11skowr.executor.module.cache.Cache.CACHE2;
 
-/**
- * Copyright (c) Asseco Business Solutions S.A. All rights reserved.
- */
-
 @Configuration
 class CacheConfiguration {
 
