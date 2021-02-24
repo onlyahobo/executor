@@ -21,7 +21,7 @@ class ModuleConfiguration {
 
     @Bean
     ModuleRepository moduleRepository() {
-        return new ModuleRepository();
+        return new ModuleRepositoryImpl();
     }
 
     @Bean

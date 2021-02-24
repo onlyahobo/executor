@@ -8,17 +8,27 @@ import static java.lang.Thread.currentThread;
 import static java.time.Duration.ofSeconds;
 import static java.util.Set.of;
 
-class ModuleRepository {
+interface ModuleRepository {
 
-    Set<String> getCats() {
+    Set<String> getCats();
+
+    Set<String> getDogs();
+
+}
+
+class ModuleRepositoryImpl implements ModuleRepository {
+
+    @Override
+    public Set<String> getCats() {
         out.println(currentThread().getName() + ": getting cats.");
-        sleep(ofSeconds(5));
+        sleep(ofSeconds(1));
         return of("kitty1", "kitty2", "kitty3");
     }
 
-    Set<String> getDogs() {
+    @Override
+    public Set<String> getDogs() {
         out.println(currentThread().getName() + ": getting dogs.");
-        sleep(ofSeconds(3));
+        sleep(ofSeconds(2));
         return of("lassie1", "lassie2", "lassie3");
     }
 
