@@ -81,34 +81,6 @@ class ExecutorBehindCacheTest extends Specification {
         out.println(animals)
     }
 
-    def "Testing if threads enter in Cacheable method before the cache gets filled (async) BROKEN"() {
-        setup:
-        def countDownLatch = new CountDownLatch(11)
-        def exceptions = []
-
-        def gettingAnimals = { ->
-            out.println(currentThread().getName())
-            try {
-                moduleFacade.getAnimalsCacheableUnsynced()
-            } catch(Exception ex) {
-                out.println(ex)
-                exceptions.add(ex)
-            } finally {
-                countDownLatch.countDown()
-            }
-        }
-
-        when: "calling the *getAnimalsCacheableUnsynced() 11 times asynchronously"
-        (1..11).each { new Thread(gettingAnimals).start() }
-        countDownLatch.await(60, SECONDS)
-
-        then: "dd"
-        20 * moduleRepository._
-        exceptions.size() == 2
-        exceptions.get(0).getClass() == TaskRejectedException.class
-        exceptions.get(1).getClass() == TaskRejectedException.class
-    }
-
     def "Testing if threads enter in Cacheable method before the cache gets filled (async + cache with 'sync' set to true)"() {
         setup:
         def countDownLatch = new CountDownLatch(10)

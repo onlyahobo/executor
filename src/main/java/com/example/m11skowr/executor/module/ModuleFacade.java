@@ -13,6 +13,10 @@ public class ModuleFacade {
 
     private final ModuleService moduleService;
 
+    public Set<String> getAnimals() {
+        return moduleService.getAnimals();
+    }
+
     @Cacheable(CACHE1)
     public Set<String> getAnimalsCacheableUnsynced() {
         return moduleService.getAnimals();

@@ -18,6 +18,7 @@ class MyTestConfiguration {
 
     @Bean
     @Primary
+    //https://objectpartners.com/2017/04/18/spring-integration-testing-with-spock-mocks/
     ModuleRepository testModuleRepository() {
         return new InMemoryModuleRepository();
     }
