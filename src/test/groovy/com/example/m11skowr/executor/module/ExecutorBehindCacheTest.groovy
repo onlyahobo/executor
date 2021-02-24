@@ -1,9 +1,11 @@
 package com.example.m11skowr.executor.module
 
+
 import org.spockframework.spring.SpringSpy
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 import java.util.concurrent.CountDownLatch
@@ -19,6 +21,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER
 @SpringBootTest
 //Must clear spring context after each test, so that the following tests don't get values from cache
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
+@ContextConfiguration(classes = MyTestConfiguration.class)
 class ExecutorBehindCacheTest extends Specification {
 
     @Autowired
