@@ -1,15 +1,17 @@
 package com.example.m11skowr.executor.module
 
-
 import org.spockframework.spring.SpringSpy
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.core.task.TaskRejectedException
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 import java.util.concurrent.CountDownLatch
 
+import static com.example.m11skowr.executor.module.InMemoryModuleRepository.CATS
+import static com.example.m11skowr.executor.module.InMemoryModuleRepository.DOGS
 import static java.lang.System.out
 import static java.lang.Thread.currentThread
 import static java.util.concurrent.TimeUnit.SECONDS
@@ -43,7 +45,7 @@ class ExecutorBehindCacheTest extends Specification {
         1 * moduleRepository.getCats()
         1 * moduleRepository.getDogs()
         animals1 == animals2
-        animals1 == Set.of("kitty1", "kitty2", "kitty3", "lassie1", "lassie2", "lassie3")
+        animals1 == CATS + DOGS
         out.println(animals1)
     }
 
@@ -75,8 +77,36 @@ class ExecutorBehindCacheTest extends Specification {
         then: "both *getDogs() and *getCats() should have been called 10 times; the 11th call to the facade should retrieve animals from cache"
         10 * moduleRepository.getCats()
         10 * moduleRepository.getDogs()
-        animals == Set.of("kitty1", "kitty2", "kitty3", "lassie1", "lassie2", "lassie3")
+        animals == CATS + DOGS
         out.println(animals)
+    }
+
+    def "Testing if threads enter in Cacheable method before the cache gets filled (async) BROKEN"() {
+        setup:
+        def countDownLatch = new CountDownLatch(11)
+        def exceptions = []
+
+        def gettingAnimals = { ->
+            out.println(currentThread().getName())
+            try {
+                moduleFacade.getAnimalsCacheableUnsynced()
+            } catch(Exception ex) {
+                out.println(ex)
+                exceptions.add(ex)
+            } finally {
+                countDownLatch.countDown()
+            }
+        }
+
+        when: "calling the *getAnimalsCacheableUnsynced() 11 times asynchronously"
+        (1..11).each { new Thread(gettingAnimals).start() }
+        countDownLatch.await(60, SECONDS)
+
+        then: "dd"
+        20 * moduleRepository._
+        exceptions.size() == 2
+        exceptions.get(0).getClass() == TaskRejectedException.class
+        exceptions.get(1).getClass() == TaskRejectedException.class
     }
 
     def "Testing if threads enter in Cacheable method before the cache gets filled (async + cache with 'sync' set to true)"() {
