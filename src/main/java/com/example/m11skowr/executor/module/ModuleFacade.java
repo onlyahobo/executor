@@ -13,10 +13,6 @@ public class ModuleFacade {
 
     private final ModuleService moduleService;
 
-    public Set<String> getAnimals() {
-        return moduleService.getAnimals();
-    }
-
     @Cacheable(CACHE1)
     public Set<String> getAnimalsCacheableUnsynced() {
         return moduleService.getAnimals();
@@ -25,6 +21,10 @@ public class ModuleFacade {
     @Cacheable(value = CACHE2, sync = true)
     public Set<String> getAnimalsCacheableSynced() {
         return moduleService.getAnimals();
+    }
+
+    public Set<String> getAnimals() {
+        return moduleService.getAnimals2();
     }
 
 }
