@@ -62,6 +62,9 @@ class ForkJoinCommonPoolSaturationTest extends Specification {
         def animalProcessingTime = currentTimeMillis() - beginTime
 
         then:
+        "animals should be returned no earlier than the commonPool worker sleepTime; this of course depends on thread scheduling but the timeouts " +
+                "in InMemoryModuleRepository should ensure that all the sleeping threads will pass through the start latch in time before the main thread " +
+                "arrives at the *thenCombineAsync() method"
         animalProcessingTime >= forkJoinCommonPoolThreadSleepTime.toMillis()
         animals == CATS + DOGS
         out.printf("Animals got in %s seconds. %n", ofMillis(animalProcessingTime).toSeconds())
