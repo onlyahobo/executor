@@ -28,8 +28,8 @@ class ForkJoinCommonPoolSaturationTest extends Specification {
     private ModuleFacade moduleFacade
 
     /*
-        thenCombine() is performed on the passed to CompletableFuture executor's thread, and on ForkJoin commonPool is none passed.
-        thenCombineAsync() is performed on on ForkJoin commonPool.
+        thenCombine() is performed on the previous completion stage's executor, on ForkJoin common pool is none.
+        thenCombineAsync() is performed on ForkJoin commonPool if no executor is passed to it.
     * */
 
     def "Saturate the ForkJoin commonPool with tasks, perform some other commonPool task (*thenCombineAsync() on CompletableFuture) and see it hang..."() {
@@ -37,7 +37,7 @@ class ForkJoinCommonPoolSaturationTest extends Specification {
         def threadCount = getRuntime().availableProcessors()
         def start = new CountDownLatch(1)
         def readyToSleep = new CountDownLatch(threadCount)
-        def forkJoinCommonPoolThreadSleepTime = ofSeconds(30)
+        def forkJoinCommonPoolThreadSleepTime = ofSeconds(10)
 
         def justSleeping = {
             readyToSleep.countDown()
