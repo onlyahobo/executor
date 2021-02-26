@@ -3,6 +3,7 @@ package com.example.m11skowr.executor.module;
 import java.time.Duration;
 import java.util.Set;
 
+import static com.google.common.util.concurrent.Uninterruptibles.sleepUninterruptibly;
 import static java.lang.System.out;
 import static java.lang.Thread.currentThread;
 import static java.time.Duration.ofSeconds;
@@ -28,11 +29,9 @@ class InMemoryModuleRepository implements ModuleRepository {
         return DOGS;
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     private void sleep(Duration duration) {
-        try {
-            Thread.sleep(duration.toMillis());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        sleepUninterruptibly(duration);
     }
+
 }

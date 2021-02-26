@@ -11,6 +11,7 @@ import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
 import static java.lang.System.out;
+import static java.lang.Thread.currentThread;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static java.util.stream.Collectors.toUnmodifiableSet;
@@ -30,7 +31,7 @@ class ModuleService {
 
     private Set<String> merge(Set<String> one, Set<String> two) {
         // With thenCombine() it is an animalThread; with thenCombineAsync forkJoin common pool thread
-        //out.println("Combining on thread: " + currentThread().getName());
+        out.println("Combining on thread: " + currentThread().getName());
         return Stream.concat(one.stream(), two.stream()).collect(toUnmodifiableSet());
     }
 
@@ -45,6 +46,12 @@ class ModuleService {
         } catch (ExecutionException | InterruptedException ex) {
             throw new RuntimeException("Could not supply instance availability.", ex);
         }
+    }
+
+    Set<String> getAnimals3() {
+        return supplyAsync(moduleRepository::getCats, executor).thenCombineAsync(
+            supplyAsync(moduleRepository::getDogs, executor), this::merge
+        ).join();
     }
 
     private Set<String> onException(Throwable ex) {

@@ -23,8 +23,12 @@ public class ModuleFacade {
         return moduleService.getAnimals();
     }
 
-    public Set<String> getAnimals() {
+    public Set<String> getAnimals2() {
         return moduleService.getAnimals2();
+    }
+
+    public Set<String> getAnimals3() {
+        return moduleService.getAnimals3();
     }
 
 }

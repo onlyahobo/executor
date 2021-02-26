@@ -40,7 +40,7 @@ class ExecutorTest extends Specification {
             out.println(currentThread().getName())
             awaitUninterruptibly(toBeStarted, ofSeconds(10))
             try {
-                moduleFacade.getAnimals()
+                moduleFacade.getAnimals2()
             } catch (Exception ex) {
                 exceptions.add(ex)
             } finally {
