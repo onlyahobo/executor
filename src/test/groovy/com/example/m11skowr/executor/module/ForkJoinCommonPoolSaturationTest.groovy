@@ -53,9 +53,9 @@ class ForkJoinCommonPoolSaturationTest extends Specification {
         threads.each { commonPool().submit(it) }
         awaitUninterruptibly(readyToSleep, ofSeconds(5))    //Must have a wait timeout, since we cannot guarantee the pool accepts all the tasks now...
 
-        and: "starting recording time and releasing the sleeping threads at the same time..."
+        and: "starting recording time and releasing the blocked threads (letting them sleep) at the same time..."
         def beginTime = currentTimeMillis()     // time start
-        start.countDown()                       // off with threads...
+        start.countDown()                       // there go the threads...
 
         and: "getting the animals and stopping recording when they arrive..."
         def animals = moduleFacade.getAnimals3()
