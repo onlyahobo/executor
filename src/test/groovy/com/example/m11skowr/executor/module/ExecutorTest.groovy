@@ -10,10 +10,11 @@ import spock.lang.Specification
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.RejectedExecutionException
 
+import static com.google.common.util.concurrent.Uninterruptibles.awaitUninterruptibly
 import static java.lang.System.out
 import static java.lang.Thread.currentThread
+import static java.time.Duration.ofSeconds
 import static java.util.Collections.synchronizedList
-import static java.util.concurrent.TimeUnit.SECONDS
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 
 @SpringBootTest
@@ -31,23 +32,26 @@ class ExecutorTest extends Specification {
 
     def "Testing executor task queue overflow"() {
         setup:
-        def countDownLatch = new CountDownLatch(11)
+        def toBeStarted = new CountDownLatch(1)
+        def toBeDone = new CountDownLatch(11)
         def exceptions = synchronizedList([])
 
         def gettingAnimals = { ->
             out.println(currentThread().getName())
+            awaitUninterruptibly(toBeStarted, ofSeconds(10))
             try {
                 moduleFacade.getAnimals()
             } catch (Exception ex) {
                 exceptions.add(ex)
             } finally {
-                countDownLatch.countDown()
+                toBeDone.countDown()
             }
         }
 
         when: "calling the *getAnimalsCacheableUnsynced() 11 times asynchronously"
         (1..11).each { new Thread(gettingAnimals).start() }
-        countDownLatch.await(60, SECONDS)
+        toBeStarted.countDown()
+        awaitUninterruptibly(toBeDone, ofSeconds(60))
 
         then:
         "there should be 20 calls to repository in total; since the same executor is used for both *getDogs() and *getCats() we cannot assume that each" +

@@ -10,7 +10,7 @@ import static java.util.Set.of;
 
 class InMemoryModuleRepository implements ModuleRepository {
 
-    public static final Set<String> CATS = of("kitty1", "kitty2", "kitty3");
+    static final Set<String> CATS = of("kitty1", "kitty2", "kitty3");
 
     static final Set<String> DOGS = of("lassie1", "lassie2", "lassie3");
 
