@@ -34,9 +34,10 @@ class ForkJoinCommonPoolSaturationTest extends Specification {
 
     def "Saturate the ForkJoin commonPool with tasks, perform some other commonPool task (*thenCombineAsync() on CompletableFuture) and see it hang..."() {
         setup: "creating as many sleeping threads as is the capacity of commonPool"
-        def threadCount = getRuntime().availableProcessors()
+        def forkJoinCommonPoolParallelism = commonPool().getParallelism()
+        assert forkJoinCommonPoolParallelism == getRuntime().availableProcessors() - 1
         def start = new CountDownLatch(1)
-        def readyToSleep = new CountDownLatch(threadCount)
+        def readyToSleep = new CountDownLatch(forkJoinCommonPoolParallelism)
         def forkJoinCommonPoolThreadSleepTime = ofSeconds(10)
 
         def justSleeping = {
@@ -47,7 +48,7 @@ class ForkJoinCommonPoolSaturationTest extends Specification {
             out.println(currentThread().getName() + " I'm awake!")
         }
 
-        def threads = range(0, threadCount).collect { new Thread(justSleeping) }
+        def threads = range(0, forkJoinCommonPoolParallelism).collect { new Thread(justSleeping) }
 
         when: "submitting them all to the executor and waiting till they're ready..."
         threads.each { commonPool().submit(it) }
@@ -67,7 +68,7 @@ class ForkJoinCommonPoolSaturationTest extends Specification {
                 "arrives at the *thenCombineAsync() method"
         animalProcessingTime >= forkJoinCommonPoolThreadSleepTime.toMillis()
         animals == CATS + DOGS
-        out.printf("Animals got in %s seconds. %n", ofMillis(animalProcessingTime).toSeconds())
+        out.printf("Animals got in %s seconds and %s milliseconds. %n", ofMillis(animalProcessingTime).toSeconds(), ofMillis(animalProcessingTime).toMillisPart())
     }
 
 }
