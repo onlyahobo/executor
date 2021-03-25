@@ -21,11 +21,6 @@ import static java.util.stream.IntStream.range
 
 class ForkJoinCommonPoolSaturationTest extends Specification {
 
-    /*
-        thenCombine() is performed on the previous completion stage's executor, on ForkJoin common pool is none.
-        thenCombineAsync() is performed on ForkJoin commonPool if no executor is passed to it.
-    * */
-
     def "Saturate the ForkJoin commonPool with tasks, perform some other commonPool task (*thenCombineAsync() on CompletableFuture) and see it hang..."() {
         setup: "creating as many sleeping threads as is the capacity of commonPool"
         def forkJoinCommonPoolParallelism = commonPool().getParallelism()
