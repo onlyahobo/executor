@@ -1,14 +1,13 @@
 package com.example.m11skowr.executor.module
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ContextConfiguration
+
 import spock.lang.Specification
 
 import java.util.concurrent.CountDownLatch
 
 import static com.example.m11skowr.executor.module.InMemoryModuleRepository.CATS
 import static com.example.m11skowr.executor.module.InMemoryModuleRepository.DOGS
+import static com.example.m11skowr.executor.module.MyTestConfiguration.moduleFacadeUnitTests
 import static com.google.common.util.concurrent.Uninterruptibles.awaitUninterruptibly
 import static java.lang.Runtime.getRuntime
 import static java.lang.System.currentTimeMillis
@@ -20,12 +19,7 @@ import static java.time.Duration.ofSeconds
 import static java.util.concurrent.ForkJoinPool.commonPool
 import static java.util.stream.IntStream.range
 
-@SpringBootTest
-@ContextConfiguration(classes = MyTestConfiguration.class)
 class ForkJoinCommonPoolSaturationTest extends Specification {
-
-    @Autowired
-    private ModuleFacade moduleFacade
 
     /*
         thenCombine() is performed on the previous completion stage's executor, on ForkJoin common pool is none.
@@ -59,7 +53,7 @@ class ForkJoinCommonPoolSaturationTest extends Specification {
         start.countDown()                       // there go the threads...
 
         and: "getting the animals and stopping recording when they arrive..."
-        def animals = moduleFacade.getAnimals3()
+        def animals = moduleFacadeUnitTests().getAnimals3()
         def animalProcessingTime = currentTimeMillis() - beginTime
 
         then:

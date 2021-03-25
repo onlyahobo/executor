@@ -23,4 +23,8 @@ class MyTestConfiguration {
         return new InMemoryModuleRepository();
     }
 
+    static ModuleFacade moduleFacadeUnitTests() {
+        return new ModuleFacade(new ModuleService(new InMemoryModuleRepository(), new ModuleConfiguration().animalExecutor()));
+    }
+
 }
