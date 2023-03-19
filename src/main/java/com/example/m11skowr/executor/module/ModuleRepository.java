@@ -2,7 +2,7 @@ package com.example.m11skowr.executor.module;
 
 import java.util.Set;
 
-interface ModuleRepository {
+public interface ModuleRepository {
 
     Set<String> getCats();
 
